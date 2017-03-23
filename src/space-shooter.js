@@ -28,6 +28,12 @@ SpaceShooter = (function() {
   // TODO(zrbecker): Change start position to be based on reasonable parameters
   // and not simply hard coded.
   const HERO_START = { x: HERO_WIDTH / 2, y: (GAME_HEIGHT - HERO_HEIGHT) / 2 };
+  const HERO_BOUNDS = {
+    minX: HERO_WIDTH / 4,
+    maxX: 5 * HERO_WIDTH,
+    minY: HERO_WIDTH / 4,
+    maxY: GAME_HEIGHT - HERO_HEIGHT - HERO_WIDTH / 4
+  };
 
   const HERO_SPEED = 200;
 
@@ -70,6 +76,11 @@ SpaceShooter = (function() {
 
       heroPos.x += heroVel.x * deltaTime / 1000;
       heroPos.y += heroVel.y * deltaTime / 1000;
+
+      heroPos.x = Math.max(HERO_BOUNDS.minX,
+        Math.min(HERO_BOUNDS.maxX, heroPos.x));
+      heroPos.y = Math.max(HERO_BOUNDS.minY,
+        Math.min(HERO_BOUNDS.maxY, heroPos.y));
     }
   };
 
