@@ -1,0 +1,21 @@
+{
+  "name": "space-shooter",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zrbecker/space-shooter.git"
+  },
+  "author": "Zachary Becker (zrbecker@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zrbecker/space-shooter/issues"
+  },
+  "homepage": "https://github.com/zrbecker/space-shooter#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}
