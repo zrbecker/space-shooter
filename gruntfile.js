@@ -16,6 +16,16 @@ module.exports = function(grunt) {
           { expand: true, cwd: 'src/', src: 'index.html', dest: 'dist/' }
         ]
       }
+    },
+    watch: {
+      scripts: {
+        files: 'src/js/**/*.js',
+        tasks: ['concat']
+      },
+      images: {
+        files: ['src/images/**/*', 'src/index.html'],
+        tasks: ['copy']
+      }
     }
   });
 
