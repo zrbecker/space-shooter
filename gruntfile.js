@@ -14,14 +14,14 @@ module.exports = function(grunt) {
             expand: true,
             cwd: 'node_modules/requirejs/',
             src: 'require.js',
-            dest: 'dist/js/third_party/'
+            dest: 'dist/js/lib/'
           },
           // copy jquery
           {
             expand: true,
             cwd: 'node_modules/jquery/dist/',
             src: 'jquery.js',
-            dest: 'dist/js/third_party/'
+            dest: 'dist/js/lib/'
           }
         ]
       }

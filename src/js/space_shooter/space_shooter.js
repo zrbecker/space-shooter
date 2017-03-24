@@ -1,6 +1,4 @@
-define(['third_party/jquery', 'input-engine'], function() {
-  var InputEngine = require('input-engine');
-
+define(['./input_engine'], function(InputEngine) {
   const GAME_WIDTH = 640;
   const GAME_HEIGHT = 400;
 

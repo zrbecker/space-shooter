@@ -1,4 +1,4 @@
-define(['third_party/jquery'], function() {
+define(function() {
   function InputEngine() {
     this.btnToKey = {};
     this.btnIsDown = {};
