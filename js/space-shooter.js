@@ -1,21 +1,90 @@
 Common = (function() {
-  function addListener(method, func) {
-    if (typeof window[method] == 'function') {
-      var oldFunc = window[method];
-      window[method] = function() {
+  function addListener(obj, evt, func) {
+    if (typeof obj[evt] == 'function') {
+      var oldFunc = obj[evt];
+      obj[evt] = function() {
         oldFunc.apply(null, arguments);
         func.apply(null, arguments);
       };
     } else {
-      window[method] = func;
+      obj[evt] = func;
     }
   }
 
   var Common = {};
-  Common.onload = function(func) { addListener('onload', func); };
-  Common.onkeydown = function(func) { addListener('onkeydown', func); };
-  Common.onkeyup = function(func) { addListener('onkeyup', func); };
+  Common.addListener = addListener;
+  Common.onload = function(func) { addListener(window, 'onload', func); };
+  Common.onkeydown = function(func) { addListener(window, 'onkeydown', func); };
+  Common.onkeyup = function(func) { addListener(window, 'onkeyup', func); };
   return Common;
+})();
+
+InputEngine = (function() {
+  function InputEngine() {
+    this.btnToKey = {};
+    this.btnIsDown = {};
+    this.keyToBtn = {};
+
+    // TODO(zrbecker): Let's make this so an object is passed to the InputEngine
+    // and that object has listeners added to it.
+    Common.addListener(window, 'onkeydown', this._onkeydown.bind(this));
+    Common.addListener(window, 'onkeyup', this._onkeyup.bind(this));
+  }
+
+  InputEngine.prototype.register = function(btn, key) {
+    if (btn in this.btnToKey) {
+      console.err.log('input_engine: warning removing old button mapping');
+      this.unregister(btn);
+    }
+    if (key in this.keyToBtn) {
+      console.err.log('input_engine: warning removing old button mapping');
+      this.unregister(this.keyToBtn(key));
+    }
+    this.btnToKey[btn] = key;
+    this.btnIsDown[btn] = false;
+    this.keyToBtn[key] = btn;
+  };
+
+  InputEngine.prototype.unregister = function(btn) {
+    if (btn in this.btnToKey) {
+      var key = this.btnToKey[btn];
+      delete this.btnToKey[btn];
+      delete this.btnIsDown[btn];
+      if (key in this.keyToBtn) {
+        delete this.keyToBtn[key];
+      } else {
+        console.err('input_engine: something is inconsistent');
+      }
+    } else {
+      console.err('input_engine: no such button');
+    }
+  };
+
+  InputEngine.prototype.isButtonDown = function(btn) {
+    return this.btnIsDown[btn];
+  };
+
+  InputEngine.prototype._onkeydown = function(evt) {
+    if (evt.key in this.keyToBtn) {
+      var btn = this.keyToBtn[evt.key];
+      if (!this.btnIsDown[btn]) {
+        this.btnIsDown[btn] = true;
+        // TODO(zrbecker): call button down listener
+      }
+    }
+  };
+
+  InputEngine.prototype._onkeyup = function(evt) {
+    if (evt.key in this.keyToBtn) {
+      var btn = this.keyToBtn[evt.key];
+      if (this.btnIsDown[btn]) {
+        this.btnIsDown[btn] = false;
+        // TODO(zrbecker): call button up listener
+      }
+    }
+  };
+
+  return InputEngine;
 })();
 
 SpaceShooter = (function() {
@@ -52,13 +121,16 @@ SpaceShooter = (function() {
     this.images = {};
     this.backgroundPositionX = 0;
 
+    this.input = new InputEngine();
+    this.input.register('hero_up', 'w');
+    this.input.register('hero_left', 'a');
+    this.input.register('hero_down', 's');
+    this.input.register('hero_right', 'd');
+
     // TODO(zrbecker): This should probably be dependent somehow on the size the
     // canvas is styled with in the HTML page.
     canvas.width = GAME_WIDTH;
     canvas.height = GAME_HEIGHT;
-
-    Common.onkeydown(this.onkeydown.bind(this));
-    Common.onkeyup(this.onkeyup.bind(this));
 
     this.loadImages();
   }
@@ -92,7 +164,12 @@ SpaceShooter = (function() {
       this.lastUpdate = now;
 
       var heroPos = this.heroPosition;
-      var heroVel = this.heroVelocity;
+
+      var heroVel = { x: 0, y: 0 };
+      if (this.input.isButtonDown('hero_up')) heroVel.y -= HERO_SPEED_Y;
+      if (this.input.isButtonDown('hero_down')) heroVel.y += HERO_SPEED_Y;
+      if (this.input.isButtonDown('hero_left')) heroVel.x -= HERO_SPEED_X;
+      if (this.input.isButtonDown('hero_right')) heroVel.x += HERO_SPEED_X;
 
       heroPos.x += heroVel.x * deltaTime / 1000;
       heroPos.y += heroVel.y * deltaTime / 1000;
@@ -124,60 +201,6 @@ SpaceShooter = (function() {
     // Draw Hero
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(imgHero, heroPos.x, heroPos.y, HERO_WIDTH, HERO_HEIGHT);
-  };
-
-  SpaceShooter.prototype.onkeydown = function(evt) {
-    var heroVel = this.heroVelocity;
-    var keys = this.keyState;
-    switch (evt.key) {
-      case 'w':
-        if (!keys['w']) {
-          keys['w'] = true;
-          heroVel.y += -HERO_SPEED_Y;
-        }
-        break;
-      case 'a':
-        if (!keys['a']) {
-          keys['a'] = true;
-          heroVel.x += -HERO_SPEED_X;
-        }
-        break;
-      case 's':
-        if (!keys['s']) {
-          keys['s'] = true;
-          heroVel.y += HERO_SPEED_Y;
-        }
-        break;
-      case 'd':
-        if (!keys['d']) {
-          keys['d'] = true;
-          heroVel.x += HERO_SPEED_X;
-        }
-        break;
-    }
-  };
-
-  SpaceShooter.prototype.onkeyup = function(evt) {
-    var heroVel = this.heroVelocity;
-    var keys = this.keyState;
-    switch (evt.key) {
-      case 'w':
-        keys['w'] = false;
-        heroVel.y -= -HERO_SPEED_Y;
-        break;
-      case 'a':
-        keys['a'] = false;
-        heroVel.x -= -HERO_SPEED_X;
-        break;
-      case 's':
-        keys['s'] = false;
-        heroVel.y -= HERO_SPEED_Y;
-        break;
-      case 'd':
-        keys['d'] = false;
-        heroVel.x -= HERO_SPEED_X;
-        break;
-    }
   };
 
   return SpaceShooter;
