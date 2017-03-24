@@ -6,9 +6,9 @@ module.exports = function(grunt) {
           // copy index.html
           { expand: true, cwd: 'src/', src: 'index.html', dest: 'dist/' },
           // copy images
-          { expand: true, cwd: 'src/', src: 'images/**', dest: 'dist/' },
+          { expand: true, cwd: 'src/', src: 'images/**/*.png', dest: 'dist/' },
           // copy javascript
-          { expand: true, cwd: 'src/', src: 'js/**', dest: 'dist/' },
+          { expand: true, cwd: 'src/', src: 'js/**/*.js', dest: 'dist/' },
           // copy requirejs
           {
             expand: true,
@@ -27,12 +27,14 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      scripts: {
-        files: 'src/js/**/*.js',
-        tasks: ['concat']
-      },
-      images: {
-        files: ['src/images/**/*', 'src/index.html'],
+      all: {
+        files: [
+          'src/index.html',
+          'src/js/**/*.js',
+          'src/images/**/*.png',
+          'node_modules/requirejs/require.js',
+          'node_modules/jquery/dist/jquery.js'
+        ],
         tasks: ['copy']
       }
     }
