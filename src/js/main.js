@@ -1,0 +1,1 @@
+requirejs(['space-shooter']);

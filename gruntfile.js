@@ -1,19 +1,28 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    concat: {
-      options: {
-        seperator: ';\n'
-      },
-      dist: {
-        src: [ 'src/js/main/*.js' ],
-        dest: 'dist/js/main.js'
-      }
-    },
     copy: {
       main: {
         files: [
+          // copy index.html
+          { expand: true, cwd: 'src/', src: 'index.html', dest: 'dist/' },
+          // copy images
           { expand: true, cwd: 'src/', src: 'images/**', dest: 'dist/' },
-          { expand: true, cwd: 'src/', src: 'index.html', dest: 'dist/' }
+          // copy javascript
+          { expand: true, cwd: 'src/', src: 'js/**', dest: 'dist/' },
+          // copy requirejs
+          {
+            expand: true,
+            cwd: 'node_modules/requirejs/',
+            src: 'require.js',
+            dest: 'dist/js/third_party/'
+          },
+          // copy jquery
+          {
+            expand: true,
+            cwd: 'node_modules/jquery/dist/',
+            src: 'jquery.js',
+            dest: 'dist/js/third_party/'
+          }
         ]
       }
     },
@@ -33,5 +42,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['concat', 'copy']);
+  grunt.registerTask('default', ['copy']);
 };
