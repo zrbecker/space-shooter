@@ -5,4 +5,4 @@ requirejs.config({
   }
 });
 
-requirejs(['jquery', 'space_shooter/space_shooter']);
+requirejs(['space_shooter/engine']);

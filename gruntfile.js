@@ -3,12 +3,13 @@ module.exports = function(grunt) {
     copy: {
       main: {
         files: [
-          // copy index.html
-          { expand: true, cwd: 'src/', src: 'index.html', dest: 'dist/' },
-          // copy images
-          { expand: true, cwd: 'src/', src: 'images/**/*.png', dest: 'dist/' },
-          // copy javascript
-          { expand: true, cwd: 'src/', src: 'js/**/*.js', dest: 'dist/' },
+          // html, images, js
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.html', '**/*.png', '**/*.js'], 
+            dest: 'dist/'
+          },
           // copy requirejs
           {
             expand: true,
