@@ -10,6 +10,12 @@ define(function() {
     $(document).keyup(this._onkeyup.bind(this));
   }
 
+  InputEngine.prototype.reset = function() {
+    this.btnToKey = {};
+    this.btnIsDown = {};
+    this.keyToBtn = {};
+  };
+
   InputEngine.prototype.register = function(btn, key) {
     if (btn in this.btnToKey) {
       console.err.log('input_engine: warning removing old button mapping');

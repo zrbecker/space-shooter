@@ -1,8 +1,13 @@
 requirejs.config({
   baseUrl: 'js/lib',
   paths: {
+    root: '..',
+    engine: '../engine',
     space_shooter: '../space_shooter'
   }
 });
 
-requirejs(['space_shooter/engine']);
+requirejs(['jquery', 'root/main'], function(jQuery, main) {
+  main();
+});
+
